@@ -435,7 +435,13 @@ Sub ProcessRow(mainWb As Workbook, ws_Input As Worksheet, ws_Output As Worksheet
     
     On Error Resume Next
     receiptDate = ws_Input.Cells(inputRow, 2).value
-    If Not IsDate(receiptDate) Then receiptDate = Date
+    If Not IsDate(receiptDate) Then
+        '  Try converting from Excel serial date number (xlPasteValues pastes dates as numbers)
+        If IsNumeric(receiptDate) And CDbl(receiptDate) > 1 Then
+            receiptDate = CDate(CDbl(receiptDate))
+        End If
+        '  Do NOT fall back to Date (run date) - that was the bug
+    End If
     On Error GoTo 0
     
     countryOfOrigin = Trim(CStr(ws_Input.Cells(inputRow, 13).value))

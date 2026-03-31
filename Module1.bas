@@ -1,5 +1,8 @@
-'V3-5-26
+'V3-31-26 - Disable S338 duty calculation (configurable via ENABLE_S338 flag)
 Option Explicit
+
+' === Configuration Flags ===
+Const ENABLE_S338 As Boolean = False    ' Set to True to re-enable Section 338 duty calculations
 
 Public g_99ValueWarnings As Collection
 
@@ -489,9 +492,11 @@ Sub ProcessRow(mainWb As Workbook, ws_Input As Worksheet, ws_Output As Worksheet
                 If htsValue > 0 Then ch99Value = ch99Value + htsValue
             End If
             
-            If IsHTSMatch(htsNum, ws_Settings, 2) Then
-                s338Rate = s338Rate + htsRate
-                If htsValue > 0 Then ch99Value = ch99Value + htsValue
+            If ENABLE_S338 Then
+                If IsHTSMatch(htsNum, ws_Settings, 2) Then
+                    s338Rate = s338Rate + htsRate
+                    If htsValue > 0 Then ch99Value = ch99Value + htsValue
+                End If
             End If
             
             If IsHTSMatch(htsNum, ws_Settings, 3) Then
